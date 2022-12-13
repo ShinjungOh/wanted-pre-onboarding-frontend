@@ -1,19 +1,75 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, {
+  ChangeEvent, useCallback, useMemo, useState,
+} from 'react';
+import styled, { css } from 'styled-components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useNavigate } from 'react-router-dom';
 import { FaLessThan } from 'react-icons/fa';
 
+import getValidationUser from '../../lib/utils/getValidationUser';
+
+interface User {
+  email: string;
+  password: string;
+  passwordCheck: string;
+}
+
+interface UserValidation {
+  email: boolean;
+  password: boolean;
+  passwordCheck: boolean;
+}
+
 const SignUp = () => {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState<User>({
+    email: '',
+    password: '',
+    passwordCheck: '',
+  });
+
+  const [userValidation, setUserValidation] = useState<UserValidation>({
+    email: false,
+    password: false,
+    passwordCheck: false,
+  });
+
+  const isUserValidation = useMemo(
+    () => !(userValidation.email && userValidation.password && userValidation.passwordCheck),
+    [userValidation.email, userValidation.password, userValidation.passwordCheck],
+  );
+
+  const onChangeUser = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const regexpCheckList = ['email', 'password'];
+    let test = false;
+    if (regexpCheckList.includes(name)) {
+      test = getValidationUser(name as 'email' | 'password', value);
+    }
+
+    if (name === 'passwordCheck') {
+      test = user.password === value;
+    }
+
+    setUser({
+      ...user,
+      [name]: value,
+    });
+
+    setUserValidation({
+      ...userValidation,
+      [name]: test,
+    });
+  }, [user, userValidation]);
 
   const handleClickSignUp = () => {
     navigate('/todo');
   };
 
-  const onClickBack = () => {
+  const onClickBack = useCallback(() => {
     navigate(-1);
-  };
+  }, []);
 
   return (
     <Container>
@@ -25,17 +81,61 @@ const SignUp = () => {
       <Title>회원가입</Title>
       <InputContainer>
         <Label htmlFor="email">ID</Label>
-        <Input type="email" id="email" placeholder="이메일을 입력하세요." />
+        <Input
+          type="email"
+          name="email"
+          id="email"
+          value={user.email}
+          placeholder="이메일을 입력하세요."
+          onChange={onChangeUser}
+          isError={user.email.length > 0 && !userValidation.email}
+        />
+        {
+          user.email.length > 0 && !userValidation.email && (
+            <ErrorMessage>이메일 형식이 올바르지 않습니다.</ErrorMessage>
+          )
+        }
       </InputContainer>
       <InputContainer>
         <Label htmlFor="password">비밀번호</Label>
-        <Input type="password" id="password" placeholder="비밀번호를 입력하세요." />
+        <Input
+          type="password"
+          name="password"
+          id="password"
+          value={user.password}
+          placeholder="비밀번호를 입력하세요."
+          onChange={onChangeUser}
+          isError={user.password.length > 0 && !userValidation.password}
+        />
+        {
+          user.password.length > 0 && !userValidation.password && (
+            <ErrorMessage>8글자 이상 입력해 주세요.</ErrorMessage>
+          )
+        }
       </InputContainer>
       <InputContainer>
-        <Label htmlFor="password-check">비밀번호 확인</Label>
-        <Input type="password" id="password-check" placeholder="비밀번호를 확인해 주세요." />
+        <Label htmlFor="passwordCheck">비밀번호 확인</Label>
+        <Input
+          type="password"
+          name="passwordCheck"
+          id="passwordCheck"
+          value={user.passwordCheck}
+          placeholder="비밀번호를 확인해 주세요."
+          onChange={onChangeUser}
+          isError={user.passwordCheck.length > 0 && !userValidation.passwordCheck}
+        />
+        {
+          user.passwordCheck.length > 0 && !userValidation.passwordCheck && (
+            <ErrorMessage>비밀번호가 동일하지 않습니다.</ErrorMessage>
+          )
+        }
       </InputContainer>
-      <Button onClick={handleClickSignUp}>회원가입</Button>
+      <Button
+        onClick={handleClickSignUp}
+        disabled={isUserValidation}
+      >
+        회원가입
+      </Button>
     </Container>
   );
 };
@@ -78,10 +178,10 @@ const Title = styled.h2`
 
 const InputContainer = styled.div`
   width: 80%;
-  height: 10%;
+  height: 82px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: start;
   margin-bottom: 18px;
 `;
@@ -91,13 +191,27 @@ const Label = styled.label`
   margin-bottom: 2px;
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ isError?: boolean }>`
   width: 100%;
-  height: 100%;
+  height: 40px;
   padding-left: 8px;
   border-radius: 5px;
   border: 1px solid #505050;
   cursor: pointer;
+  &:focus {
+    outline: unset;
+  }
+  ${(props) => props.isError
+          && css`
+            border: 1px solid #ff5858;
+            background-color: #facbcb;
+          `}
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 12px;
+  margin: 5px 0 0 0;
 `;
 
 const Button = styled.button`
@@ -110,4 +224,9 @@ const Button = styled.button`
   color: #ffffff;
   font-size: 16px;
   cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: #d7d7d7;
+  }
 `;

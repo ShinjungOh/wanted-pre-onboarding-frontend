@@ -1,19 +1,60 @@
-import React from 'react';
+import React, {
+  ChangeEvent, useCallback, useMemo, useState,
+} from 'react';
 import styled from 'styled-components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useNavigate } from 'react-router-dom';
 import { FaLessThan } from 'react-icons/fa';
 
+import getValidationUser from '../../lib/utils/getValidationUser';
+
+interface User {
+  disabled: number;
+  email: string;
+}
+
+interface UserValidation {
+  email: boolean;
+  password: boolean;
+}
+
 const LogIn = () => {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState<{ email: string, password: string }>({
+    email: '',
+    password: '',
+  });
+
+  const [userValidation, setUserValidation] = useState<UserValidation>({
+    email: false,
+    password: false,
+  });
+
+  const isUserValidation = useMemo(() => !(userValidation.email && userValidation.password), [userValidation.email, userValidation.password]);
+
+  const onChangeUser = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const regexp = getValidationUser(name as 'email' | 'password', value);
+
+    setUser({
+      ...user,
+      [name]: value,
+    });
+
+    setUserValidation({
+      ...userValidation,
+      [name]: regexp,
+    });
+  };
 
   const handleClickLogIn = () => {
     navigate('/todo');
   };
 
-  const onClickBack = () => {
+  const onClickBack = useCallback(() => {
     navigate(-1);
-  };
+  }, []);
 
   return (
     <Container>
@@ -25,13 +66,32 @@ const LogIn = () => {
       <Title>로그인</Title>
       <InputContainer>
         <Label htmlFor="email">ID</Label>
-        <Input type="email" id="email" placeholder="이메일을 입력하세요." />
+        <Input
+          type="email"
+          name="email"
+          id="email"
+          value={user.email}
+          placeholder="이메일을 입력하세요."
+          onChange={onChangeUser}
+        />
       </InputContainer>
       <InputContainer>
         <Label htmlFor="password">비밀번호</Label>
-        <Input type="password" id="password" placeholder="비밀번호를 입력하세요." />
+        <Input
+          type="password"
+          name="password"
+          id="password"
+          value={user.password}
+          placeholder="비밀번호를 입력하세요."
+          onChange={onChangeUser}
+        />
       </InputContainer>
-      <Button onClick={handleClickLogIn}>로그인</Button>
+      <Button
+        onClick={handleClickLogIn}
+        disabled={isUserValidation}
+      >
+        로그인
+      </Button>
     </Container>
   );
 };
@@ -106,4 +166,9 @@ const Button = styled.button`
   color: #ffffff;
   font-size: 16px;
   cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: #d7d7d7;
+  }
 `;
