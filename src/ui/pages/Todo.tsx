@@ -5,7 +5,7 @@ import React, {
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { getHasAccessToken } from '../../lib/utils/accessTokenStore';
+import { clearAccessToken, getHasAccessToken } from '../../lib/utils/accessTokenStore';
 import { Todo } from '../../lib/types/todo.interface';
 import TodoCreate from '../components/todo/TodoCreate';
 import TodoList from '../components/todo/TodoList';
@@ -48,7 +48,8 @@ const TodoPage = () => {
   };
 
   const onClickLogout = () => {
-    // TODO: Logout
+    clearAccessToken();
+    navigate('/', { replace: true });
   };
 
   const getTodos = async () => {
@@ -62,7 +63,7 @@ const TodoPage = () => {
 
   useEffect(() => {
     if (!getHasAccessToken()) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
 
     getTodos();
