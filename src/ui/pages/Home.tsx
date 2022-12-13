@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useNavigate } from 'react-router';
+
+import { getHasAccessToken } from '../../lib/utils/accessTokenStore';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -13,6 +15,12 @@ const Home = () => {
   const onClickSignUp = () => {
     navigate('/signup');
   };
+
+  useEffect(() => {
+    if (getHasAccessToken()) {
+      navigate('/todo');
+    }
+  }, []);
 
   return (
     <Container>

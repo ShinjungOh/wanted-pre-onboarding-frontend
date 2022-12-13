@@ -1,5 +1,5 @@
 import React, {
-  ChangeEvent, useCallback, useMemo, useState,
+  ChangeEvent, useCallback, useEffect, useMemo, useState,
 } from 'react';
 import styled from 'styled-components';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -9,7 +9,7 @@ import { FaLessThan } from 'react-icons/fa';
 import getValidationUser from '../../lib/utils/getValidationUser';
 import { User, UserValidation } from '../../lib/types/user.interface';
 import authRest from '../../lib/api/authRest';
-import { setAccessToken } from '../../lib/utils/accessTokenStore';
+import { getHasAccessToken, setAccessToken } from '../../lib/utils/accessTokenStore';
 
 const LogIn = () => {
   const navigate = useNavigate();
@@ -54,6 +54,12 @@ const LogIn = () => {
 
   const onClickBack = useCallback(() => {
     navigate(-1);
+  }, []);
+
+  useEffect(() => {
+    if (getHasAccessToken()) {
+      navigate('/todo');
+    }
   }, []);
 
   return (
