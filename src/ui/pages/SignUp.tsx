@@ -7,18 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { FaLessThan } from 'react-icons/fa';
 
 import getValidationUser from '../../lib/utils/getValidationUser';
-
-interface User {
-  email: string;
-  password: string;
-  passwordCheck: string;
-}
-
-interface UserValidation {
-  email: boolean;
-  password: boolean;
-  passwordCheck: boolean;
-}
+import { User, UserValidation } from '../../lib/types/user.interface';
+import authRest from '../../lib/api/authRest';
+import { setAccessToken } from '../../lib/utils/accessTokenStore';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -63,8 +54,15 @@ const SignUp = () => {
     });
   }, [user, userValidation]);
 
-  const handleClickSignUp = () => {
-    navigate('/todo');
+  const handleClickSignUp = async () => {
+    try {
+      const response = await authRest.postSignUp(user);
+      alert('회원가입에 성공했습니다!');
+      setAccessToken(response.data.access_token);
+      navigate('/todo');
+    } catch (e: any) {
+      alert(e.response?.data?.message || '회원가입에 실패했습니다.');
+    }
   };
 
   const onClickBack = useCallback(() => {

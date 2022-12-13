@@ -7,26 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import { FaLessThan } from 'react-icons/fa';
 
 import getValidationUser from '../../lib/utils/getValidationUser';
-
-interface User {
-  disabled: number;
-  email: string;
-}
-
-interface UserValidation {
-  email: boolean;
-  password: boolean;
-}
+import { User, UserValidation } from '../../lib/types/user.interface';
+import authRest from '../../lib/api/authRest';
+import { setAccessToken } from '../../lib/utils/accessTokenStore';
 
 const LogIn = () => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<{ email: string, password: string }>({
+  const [user, setUser] = useState<Omit<User, 'passwordCheck'>>({
     email: '',
     password: '',
   });
 
-  const [userValidation, setUserValidation] = useState<UserValidation>({
+  const [userValidation, setUserValidation] = useState<Omit<UserValidation, 'passwordCheck'>>({
     email: false,
     password: false,
   });
@@ -48,8 +41,15 @@ const LogIn = () => {
     });
   };
 
-  const handleClickLogIn = () => {
-    navigate('/todo');
+  const handleClickLogIn = async () => {
+    try {
+      const response = await authRest.postSignIn(user);
+      alert('로그인에 성공했습니다!');
+      setAccessToken(response.data.access_token);
+      navigate('/todo');
+    } catch (e: any) {
+      alert(e.response?.data?.message || '로그인에 실패했습니다.');
+    }
   };
 
   const onClickBack = useCallback(() => {
@@ -134,7 +134,7 @@ const Title = styled.h2`
 
 const InputContainer = styled.div`
   width: 80%;
-  height: 10%;
+  height: 82px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,7 +149,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   width: 100%;
-  height: 100%;
+  height: 40px;
   padding-left: 8px;
   border-radius: 5px;
   border: 1px solid #505050;
