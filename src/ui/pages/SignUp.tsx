@@ -1,24 +1,44 @@
 import React from 'react';
 import styled from 'styled-components';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useNavigate } from 'react-router-dom';
+import { FaLessThan } from 'react-icons/fa';
 
-const SignUp = () => (
-  <Container>
-    <Title>회원가입</Title>
-    <InputContainer>
-      <Label htmlFor="email">ID</Label>
-      <Input type="email" id="email" placeholder="이메일을 입력하세요." />
-    </InputContainer>
-    <InputContainer>
-      <Label htmlFor="password">비밀번호</Label>
-      <Input type="password" id="password" placeholder="비밀번호를 입력하세요." />
-    </InputContainer>
-    <InputContainer>
-      <Label htmlFor="password-check">비밀번호 확인</Label>
-      <Input type="password" id="password-check" placeholder="비밀번호를 확인해 주세요." />
-    </InputContainer>
-    <Button>회원가입</Button>
-  </Container>
-);
+const SignUp = () => {
+  const navigate = useNavigate();
+
+  const handleClickSignUp = () => {
+    navigate('/todo');
+  };
+
+  const onClickBack = () => {
+    navigate(-1);
+  };
+
+  return (
+    <Container>
+      <Header>
+        <ButtonBox onClick={onClickBack}>
+          <FaLessThan />
+        </ButtonBox>
+      </Header>
+      <Title>회원가입</Title>
+      <InputContainer>
+        <Label htmlFor="email">ID</Label>
+        <Input type="email" id="email" placeholder="이메일을 입력하세요." />
+      </InputContainer>
+      <InputContainer>
+        <Label htmlFor="password">비밀번호</Label>
+        <Input type="password" id="password" placeholder="비밀번호를 입력하세요." />
+      </InputContainer>
+      <InputContainer>
+        <Label htmlFor="password-check">비밀번호 확인</Label>
+        <Input type="password" id="password-check" placeholder="비밀번호를 확인해 주세요." />
+      </InputContainer>
+      <Button onClick={handleClickSignUp}>회원가입</Button>
+    </Container>
+  );
+};
 
 export default SignUp;
 
@@ -30,7 +50,26 @@ const Container = styled.div`
   justify-content: flex-start;
   align-items: center;
   position: relative;
-  top: 10%;
+`;
+
+const Header = styled.div`
+  width: 100%;
+  height: 40px;
+  padding: 15px 10px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  top: 0;
+  font-size: 20px;
+`;
+
+const ButtonBox = styled.div`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 `;
 
 const Title = styled.h2`
@@ -40,7 +79,6 @@ const Title = styled.h2`
 const InputContainer = styled.div`
   width: 80%;
   height: 10%;
-  //background-color: grey;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -59,6 +97,7 @@ const Input = styled.input`
   padding-left: 8px;
   border-radius: 5px;
   border: 1px solid #505050;
+  cursor: pointer;
 `;
 
 const Button = styled.button`
@@ -70,4 +109,5 @@ const Button = styled.button`
   background-color: #3a68f9;
   color: #ffffff;
   font-size: 16px;
+  cursor: pointer;
 `;

@@ -1,13 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { useNavigate } from 'react-router';
 
-const Home = () => (
-  <Container>
-    <Title>투두 리스트</Title>
-    <Button>로그인</Button>
-    <Button>회원가입</Button>
-  </Container>
-);
+const Home = () => {
+  const navigate = useNavigate();
+
+  const onClickLogIn = () => {
+    navigate('/login');
+  };
+
+  const onClickSignUp = () => {
+    navigate('/signup');
+  };
+
+  return (
+    <Container>
+      <Title>투두 리스트</Title>
+      <Button onClick={onClickLogIn}>로그인</Button>
+      <Button onClick={onClickSignUp}>회원가입</Button>
+    </Container>
+  );
+};
 
 export default Home;
 
@@ -36,4 +50,5 @@ const Button = styled.button`
   background-color: #3a68f9;
   color: #ffffff;
   font-size: 16px;
+  cursor: pointer;
 `;
