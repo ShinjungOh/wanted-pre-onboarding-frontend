@@ -1,4 +1,5 @@
 import React, {
+  ChangeEvent, FormEvent,
   useEffect, useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,18 +9,30 @@ import { getHasAccessToken } from '../../lib/utils/accessTokenStore';
 import { Todo } from '../../lib/types/todo.interface';
 import TodoCreate from '../components/todo/TodoCreate';
 import TodoList from '../components/todo/TodoList';
+import todoRest from '../../lib/api/todoRest';
 
 const TodoPage = () => {
   const navigate = useNavigate();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [createInput, setCreateInput] = useState('');
 
-  const onChangeCreateInput = () => {
-    // todo: onChangeCreateInput
+  const onChangeCreateInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setCreateInput(value);
   };
 
-  const onSubmitCreate = () => {
-    // todo: onSubmitCreate
+  const onSubmitCreate = async (e: FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault();
+      const response = await todoRest.postTodo(createInput);
+      setTodos([
+        ...todos,
+        response.data,
+      ]);
+      setCreateInput('');
+    } catch (e) {
+      alert('할 일 등록에 실패했습니다.');
+    }
   };
 
   const onToggleIsCompleted = () => {
@@ -38,10 +51,21 @@ const TodoPage = () => {
     // TODO: Logout
   };
 
+  const getTodos = async () => {
+    try {
+      const response = await todoRest.getTodos();
+      setTodos(response.data);
+    } catch (e) {
+      alert('할 일 불러오기에 실패했습니다.');
+    }
+  };
+
   useEffect(() => {
     if (!getHasAccessToken()) {
       navigate('/');
     }
+
+    getTodos();
   }, []);
 
   return (
