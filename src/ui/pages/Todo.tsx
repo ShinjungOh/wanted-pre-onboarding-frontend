@@ -63,8 +63,19 @@ const TodoPage = () => {
     }
   };
 
-  const onClickEdit = () => {
-    // todo: onClickEdit
+  const onClickEdit = async (id: number, todo: string) => {
+    try {
+      const todoItem = todos.find((todo) => todo.id === id);
+      if (todoItem) {
+        const response = await todoRest.putTodo({
+          ...todoItem,
+          todo,
+        });
+        setTodos(todos.map((todo) => (todo.id === response.data.id ? response.data : todo)));
+      }
+    } catch (e) {
+      alert('할 일 수정에 실패했습니다.');
+    }
   };
 
   const onClickLogout = () => {
@@ -96,7 +107,6 @@ const TodoPage = () => {
           <Button
             color="secondary"
             onClick={onClickLogout}
-            style={{ height: '32px', flex: 'unset' }}
           >
             로그아웃
           </Button>
@@ -108,6 +118,7 @@ const TodoPage = () => {
           todos={todos}
           onToggleIsCompleted={onToggleIsCompleted}
           onClickDelete={onClickDelete}
+          onClickEdit={onClickEdit}
         />
       </Body>
       <TodoCreate
@@ -166,8 +177,8 @@ const Button = styled.button`
   box-sizing: border-box;
   border-radius: 8px;
   font-weight: 500;
-  height: 48px;
-  flex: 1 1 0;
+  height: 32px;
+  flex: unset;
   cursor: pointer;
   transition: all 300ms;
   

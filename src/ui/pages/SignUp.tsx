@@ -208,7 +208,7 @@ const Input = styled.input<{ isError?: boolean }>`
   ${(props) => props.isError
           && css`
             border: 1px solid #ff5858;
-            background-color: #facbcb;
+            background-color: #fce8e8;
           `}
 `;
 

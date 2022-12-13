@@ -1,7 +1,9 @@
-import React, { memo } from 'react';
+import React, {
+  ChangeEvent, memo, useCallback, useRef, useState,
+} from 'react';
 import styled, { css } from 'styled-components';
 import {
-  MdDelete, MdDone,
+  MdDelete, MdDone, MdEdit, MdOutlineClose,
 } from 'react-icons/md';
 
 import { Todo } from '../../../lib/types/todo.interface';
@@ -9,6 +11,7 @@ import { Todo } from '../../../lib/types/todo.interface';
 interface Props {
   onToggleIsCompleted: (id: number) => void;
   onClickDelete: (id: number) => void;
+  onClickEdit: (id: number, todo: string) => void;
 }
 
 const TodoItem = ({
@@ -17,20 +20,77 @@ const TodoItem = ({
   isCompleted,
   onToggleIsCompleted,
   onClickDelete,
-}: Props & Todo) => (
-  <Container>
-    <CheckCircle
-        done={isCompleted}
-        onClick={() => { onToggleIsCompleted(id); }}
-    >
-      {isCompleted && <MdDone />}
-    </CheckCircle>
-    <Text done={isCompleted}>{todo}</Text>
-    <Action onClick={() => { onClickDelete(id); }}>
-      <MdDelete />
-    </Action>
-  </Container>
-);
+  onClickEdit,
+}: Props & Todo) => {
+  const [isEdit, setIsEdit] = useState(false);
+  const [editInput, setEditInput] = useState('');
+
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  const onToggleIsEdit = useCallback(() => {
+    if (isEdit) {
+      setEditInput('');
+    } else {
+      setEditInput(todo);
+    }
+    setIsEdit((prev) => !prev);
+  }, [isEdit, todo]);
+
+  const onChangeEditInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setEditInput(value);
+  }, []);
+
+  const onClickEditTodo = useCallback(() => {
+    if (editInput === '') {
+      alert('할 일을 입력해주세요.');
+      editInputRef.current?.focus();
+      return;
+    }
+    onClickEdit(id, editInput);
+    onToggleIsEdit();
+  }, [editInput]);
+
+  return (
+    <Container>
+      {
+        isEdit ? (
+          <>
+            <Input
+              type="text"
+              value={editInput}
+              onChange={onChangeEditInput}
+              autoFocus
+              ref={editInputRef}
+            />
+            <Action onClick={onToggleIsEdit}>
+              <MdOutlineClose />
+            </Action>
+            <Action onClick={onClickEditTodo}>
+              <MdDone />
+            </Action>
+          </>
+        ) : (
+          <>
+            <CheckCircle
+              done={isCompleted}
+              onClick={() => { onToggleIsCompleted(id); }}
+            >
+              {isCompleted && <MdDone />}
+            </CheckCircle>
+            <Text done={isCompleted}>{todo}</Text>
+            <Action onClick={onToggleIsEdit}>
+              <MdEdit />
+            </Action>
+            <Action onClick={() => { onClickDelete(id); }}>
+              <MdDelete />
+            </Action>
+          </>
+        )
+      }
+    </Container>
+  );
+};
 
 export default memo(TodoItem);
 
@@ -65,10 +125,10 @@ const CheckCircle = styled.div<{ done: boolean }>`
   margin-right: 20px;
   cursor: pointer;
   ${(props) => props.done
-  && css`
-      border: 1px solid #2478ff;
-      color: #2478ff;
-    `}
+          && css`
+            border: 1px solid #2478ff;
+            color: #2478ff;
+          `}
 `;
 
 const Text = styled.div<{ done: boolean }>`
@@ -79,8 +139,18 @@ const Text = styled.div<{ done: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   ${(props) => props.done
-  && css`
-      color: #ced4da;
-      text-decoration: line-through;
-    `}
+          && css`
+            color: #ced4da;
+            text-decoration: line-through;
+          `}
+`;
+
+const Input = styled.input`
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  width: 100%;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
 `;

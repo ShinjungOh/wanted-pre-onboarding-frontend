@@ -8,12 +8,14 @@ interface Props {
   todos: Todo[];
   onToggleIsCompleted: (id: number) => void;
   onClickDelete: (id: number) => void;
+  onClickEdit: (id: number, todo: string) => void;
 }
 
 const TodoList = ({
   todos,
   onToggleIsCompleted,
   onClickDelete,
+  onClickEdit,
 }: Props) => (
   <Container>
     {
@@ -23,6 +25,7 @@ const TodoList = ({
           {...todo}
           onToggleIsCompleted={onToggleIsCompleted}
           onClickDelete={onClickDelete}
+          onClickEdit={onClickEdit}
         />
       ))
     }
