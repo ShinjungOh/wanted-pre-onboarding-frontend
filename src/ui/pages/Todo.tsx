@@ -35,12 +35,32 @@ const TodoPage = () => {
     }
   };
 
-  const onToggleIsCompleted = () => {
-    // todo: onToggleisCompleted
+  const onToggleIsCompleted = async (id: number) => {
+    try {
+      const todoItem = todos.find((todo) => todo.id === id);
+      if (todoItem) {
+        const response = await todoRest.putTodo({
+          ...todoItem,
+          isCompleted: !todoItem.isCompleted,
+        });
+        setTodos(todos.map((todo) => (todo.id === response.data.id ? response.data : todo)));
+      }
+    } catch (e) {
+      alert('할 일 수정에 실패했습니다.');
+    }
   };
 
-  const onClickDelete = () => {
-    // todo: onClickDelete
+  const onClickDelete = async (id: number) => {
+    try {
+      const isConfirm = confirm('할 일을 삭제하시겠습니까?');
+      if (!isConfirm) {
+        return;
+      }
+      await todoRest.deleteTodo(id);
+      setTodos(todos.filter((todo) => todo.id !== id));
+    } catch (e) {
+      alert('할 일 삭제에 실패했습니다.');
+    }
   };
 
   const onClickEdit = () => {
