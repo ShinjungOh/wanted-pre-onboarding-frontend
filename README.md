@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+# 원티드 프리온보딩 프론트엔드 인턴십
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+원티드 프리온보딩 프론트엔드 인턴십 선발과제입니다.  
+[👉선발과제 링크](https://github.com/walking-sunset/selection-task)
 
-## Available Scripts
+<br><br>
 
-In the project directory, you can run:
+## 배포 링크
 
-### `npm start`
+[🎯프로젝트 배포 링크](https://astounding-starship-d27d83.netlify.app)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![](screen.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+<br><br>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 프로젝트 실행 방법
 
-### `npm run build`
+### 설치 및 실행
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```md
+git clone https://github.com/ShinjungOh/wanted-pre-onboarding-frontend 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+npm install
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+<br><br>
 
-### `npm run eject`
+## 프로젝트 설명
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1. 로그인 / 회원가입
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* 유효성 검사
+  * 회원가입, 로그인 시 `이메일에 @ 포함, 비밀번호 8자 이상` 조건을 만족하는지 검사합니다.
+  * 유효성 검사에 통과하면 로그인/회원가입 버튼이 활성화 됩니다.
+  * 비밀번호 확인의 경우, 비밀번호와 동일한 값을 입력했는지 체크합니다.
+  * 로그인/회원가입에 각각 성공하거나 실패한 경우, alert 창으로 결과를 알려줍니다.
+* API 호출
+  * 로그인에 성공할 경우, todo 페이지로 이동합니다.
+  * 로그인/회원가입시 로컬 스토리지에 토큰이 저장됩니다.
+* 리다이렉트 처리
+  * 토큰이 존재할 경우, todo 페이지로 이동합니다.
+  * 토큰이 존재하지 않는 경우, 메인 페이지로 이동합니다. 
+  * 로그아웃 버튼을 누르면 로컬 스토리지의 토큰이 삭제되고 메인 페이지로 이동합니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+<br>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 2. 투두 리스트
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* 목록 조회, 추가
+  * todo 페이지에서 투두 리스트의 목록을 볼 수 있습니다.
+  * 할 일 왼쪽의 체크 박스에 완료 여부가 표시됩니다.
+  * 하단의 입력창과 추가 버튼에서 새로운 할 일을 등록할 수 있습니다. 
+  * 1글자 이상 입력해야 추가 버튼이 활성화 됩니다.
+* 수정, 삭제
+  * 투두 리스트의 개별 아이템 우측 수정버튼을 누르면 수정모드가 활성화되고, 할 일 내용을 수정할 수 있습니다. 
+  * 수정모드에서 개별 아이템의 우측에 제출버튼과 취소버튼이 표시됩니다.
+  * 해당 버튼을 통해서 수정 내용을 제출하거나 수정을 취소할 수 있습니다. 
+  * 할 일 우측의 삭제 버튼을 누르면 해당 할 일이 삭제됩니다.
